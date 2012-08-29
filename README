@@ -67,7 +67,7 @@ And in 5 seconds, you should see on your listening netcat:
 
 You can also add tasks as JSON objects. Here's one without a delay:
 
-    curl -H "Content-Type: applicatoin/json" -d '{"url": "http://localhost:9099/worker", "params": {"foo": "bar"}}' http://localhost:8088/queue
+    curl -H "Content-Type: application/json" -d '{"url": "http://localhost:9099/worker", "params": {"foo": "bar"}}' http://localhost:8088/queue
    
 
 WHAT'S GOING ON?
