@@ -110,7 +110,7 @@ class DistributedScheduler(object):
         
         elif event == 'failure':
             task_id, reason = payload.split(':', 1)
-            self.scheduled.pop(task.id)
+            self.scheduled.pop(task_id)
             print "FAILURE %s: %s" % (task_id, reason)
     
     def _sendto_replicas(self, task, message):
