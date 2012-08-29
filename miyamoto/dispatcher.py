@@ -78,8 +78,8 @@ class Dispatcher(object):
                 self.scheduler.send('start:%s\n' % task.id)
                 
                 if task.url.startswith('http'):
-                    headers = {"User-Agent": "Miyamoto/0.1", "X-Task": task.id, "X-Queue": task.queue_name}
-                    resp, content = http.request(task.url, method=task.method, headers=headers)
+                    headers = {"User-Agent": "Miyamoto/0.1", "X-Task": task.id, "X-Queue": task.queue_name, "Content-type": "application/json"}
+                    resp, content = http.request(task.url, method='POST', headers=headers, body=task.params)
                 else:
                     zmq_remotes = frozenset(task.url.split(','))
                     if not zmq_remotes in self.zmq_sockets:

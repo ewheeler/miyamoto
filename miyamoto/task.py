@@ -18,14 +18,14 @@ class Task(object):
             self.method = data.get('method', 'POST')
             countdown = data.get('countdown')
             self.eta = data.get('eta')
-            self.params = data.get('params', {})
+            self.params = json.dumps(data.get('params', {}))
         elif content_type == 'application/x-www-form-urlencoded':
             data = urlparse.parse_qs(body)
             self.url = data['task.url'][0]
             self.method = data.get('task.method', ['POST'])[0]
             countdown = data.get('task.countdown', [None])[0]
             self.eta = data.get('task.eta', [None])[0]
-            self.params = dict([(k,v[0]) for k,v in data.items() if not k.startswith('task.')])
+            self.params = json.dumps(dict([(k,v[0]) for k,v in data.items() if not k.startswith('task.')]))
         else:
             raise NotImplementedError("content type not supported")
         if countdown and not self.eta:
