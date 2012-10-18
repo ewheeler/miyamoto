@@ -80,6 +80,23 @@ class Dispatcher(object):
                 if task.url.startswith('http'):
                     headers = {"User-Agent": "Miyamoto/0.1", "X-Task": task.id, "X-Queue": task.queue_name, "Content-type": "application/json"}
                     resp, content = http.request(task.url, method=task.method, headers=headers, body=task.params)
+                    if task.result_callback_url and content:
+                        result_content_type = resp.get_header('Content-type')
+                        result_data = content
+                        if util.walks_like_json(result_content_type):
+                            result_data = json.loads(content)
+                        elif util.talks_like_form(result_content_type):
+                            result_data = dict([(k,v[0]) for k,v in urlparse.parse_qs(content).items() ])
+                        else:
+                            try:
+                                result_data = json.loads(content)
+                            except Exception, e:
+                                try:
+                                    result_data = dict([(k,v[0]) for k,v in urlparse.parse_qs(content).items() ])
+                                except Exception, e:
+                                    pass
+                        result_data.update({'status': resp.status, 'reason': resp.reason, 'headers': resp.getheaders()})
+                        callback_resp, callback_content = http.request(task.result_callback_url, method='POST', body=json.dumps(result_data))
                 else:
                     zmq_remotes = frozenset(task.url.split(','))
                     if not zmq_remotes in self.zmq_sockets:
